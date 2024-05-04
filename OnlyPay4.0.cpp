@@ -343,7 +343,7 @@ void RegistrarCuenta(Usuario usuarios[], int numUsuarios, string name, string la
 }
 
 
-int welcomeMenu(string username)
+void welcomeMenu(string username)
 {
 	ms();
 	int opc;
@@ -359,7 +359,6 @@ int welcomeMenu(string username)
 		cout << "0. Salir\n\n";
 		cout << "Seleccione una opcion: " << endl;
 		cin >> opc;
-		return opc;
 		switch (opc)
 		{
 		case 1:
@@ -376,7 +375,7 @@ int welcomeMenu(string username)
 	} while (opc != 0);
 }
 
-void loginVerificar(Usuario usuarios[], int numUsuarios, string username, string password)
+bool loginVerificar(Usuario usuarios[], int numUsuarios, string username, string password)
 {
 	bool salir = false;
 	usuarioActivo usuario;
@@ -389,9 +388,7 @@ void loginVerificar(Usuario usuarios[], int numUsuarios, string username, string
 		{
 			usuario.ID = i;
 
-			if (welcomeMenu(username) == 5) {
-				cout << "hola";
-			}
+			return true;
 
 
 		}
@@ -401,6 +398,7 @@ void loginVerificar(Usuario usuarios[], int numUsuarios, string username, string
 			cout << "Favor de intentar de nuevo";
 			secs(2);
 			salir = true;
+			return false;
 		}
 	}
 }
@@ -510,7 +508,11 @@ void menuPrincipal()
 			cin >> username;
 			cout << "Password: " << endl;
 			cin >> password;
-			loginVerificar(usuarios, numUsuarios, username, password);
+			if (loginVerificar(usuarios, numUsuarios, username, password))
+			{
+				welcomeMenu(username);
+			}
+
 			break;
 
 		case 3:
