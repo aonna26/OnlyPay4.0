@@ -390,7 +390,7 @@ void loginVerificar(Usuario usuarios[], int numUsuarios, string username, string
 			usuario.ID = i;
 
 			if (welcomeMenu(username) == 5) {
-				cout << "hola";
+				cout << "hola";  //// AQUI 
 			}
 
 
