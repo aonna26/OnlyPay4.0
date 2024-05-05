@@ -3,13 +3,6 @@ App de simulacion de banco movil que permite a los usuarios hacer transacciones,
 
 
 How to use
-1. Registrar una cuenta
-	a.Requisitos: nombre,apellidos,username,password,etc.
-2. Inicia seccion 
-	a.Requisitos:tener una cuenta registrada.
-3. Explora las opciones del menu
-	a. Envie dinero
-	b.ver movimientos de transacciones
-	c.recargar
-	d.Ver Estado de cuenta
-	e.salir
+1. Registrar una cuenta: nombre, apellidos, username, password, etc.
+2. Inicia seccion: Se necesita tener una cuenta registrada.
+3. Explora las opciones del menu: Envie dinero, ver movimientos de transacciones, recargar, Ver Estado de cuenta, salir.
