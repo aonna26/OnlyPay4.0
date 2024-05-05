@@ -53,6 +53,18 @@ void invalido() {
 	cout << Red; cout << " * Ingreso NO valido * \n" << Default;
 }
 
+bool Confirmacion() {
+	string confirmacion;
+	bool again = false;
+	cout << "\nPuede responder con Si o No: \n\n";
+	cin >> confirmacion;
+	if (confirmacion == "NO" || confirmacion == "no" || confirmacion == "No") {
+		again = true;
+		secs(1);
+	}
+	return again;
+}
+
 //// animated screen
 void loading(int x = 3, string verify = "el balance disponible") {
 	ms();
@@ -247,18 +259,17 @@ bool PasswordCheck(string password, bool pass)
 
 //Recibe el blueprint Usuario que tiene un array llamado usuarios, tambien recibe el numero de usuarios y el username
 //La funcion UserExists es para verificar si el usuario ya existe
-bool UserExists(Usuario usuarios[], int numUsuarios, string username)
-{
 
+bool UserExists(Usuario usuarios[], int numUsuarios, string x)
+{
 	//va por cada usuario en el array
 	//siempre y cuando no pase la cantidad de usuarios que pueda guardar
 	for (int i = 0; i < numUsuarios; i++)
 	{
-		string usuarioActual = usuarios[i].username;
+		string usuario = usuarios[i].username;
 
-		if (usuarioActual == username)
+		if (usuario == x)
 		{
-
 			//si el usuario Actual es igual al username que se ha ingresado devuelve true
 			return true;
 		}
@@ -278,9 +289,9 @@ int idNum(Usuario usuarios[], string username) {
 		//si el usuario[0] esta empty en blueprint (Usuario) 0 guarda la informacion
 		if (usuarios[i].username == username) //Al encontrar un elemento vacio guarda la informacion del usuario en ese elemento
 		{
+			x = i;
 			salir = true;
 		}
-		x = i;
 	}
 	return x;
 }
@@ -305,7 +316,7 @@ int Fondos(Usuario usuarios[], int i)
 	usuarios[i].balance = usuarios[i].balance + fondos;
 	loading(2, "los fondos disponibles");
 
-	//// Si el banco lo permite (se obvia que s  al momento):
+	//// Si el banco lo permite (se obvia que yes al momento):
 	cout << Green; cout << " * Aprobado *" << Default;
 	secs(2);
 	return usuarios[i].balance;
@@ -414,6 +425,80 @@ bool loginVerificar(Usuario usuarios[], int numUsuarios, string username, string
 		return false;
 	}
 }
+
+//////////////////// SEND MONEY
+
+//// balance
+int Balance(int balance) {
+	if (balance <= 0) {
+		cout << Red; cout << "Balance Actual: $"; //balance aparece en rojo cuando es menor o igual a cero
+	}
+	else {
+		cout << Green; cout << "Balance Actual: $";
+	}
+	return balance;
+}
+
+string EnviarDinero(Usuario usuarios[], int x)
+{
+	string userToSendMoney;
+	int balance = usuarios[x].balance;
+
+	cout << Balance(balance) << Default;
+	cout << "\n\nSaludos, a quien usted quiere enviar dinero? " << endl
+		<< "\nRecipiente: ";
+	cin >> userToSendMoney;
+
+	return userToSendMoney;
+}
+
+int EnviarDineroCont(Usuario usuarios[], string userToSendMoney, int x) {
+
+	srand(time(0));  //// tiempo es random
+	int balance = usuarios[x].balance;
+	int dineroEnviar = 0;
+	do {
+
+		cout << "Cantidad: $";
+		cin >> dineroEnviar;
+		secs(1);
+
+		//confirmar transaccion
+		cout << "Transaccion: \n";
+		cout << "\n\tRecipiente: " << userToSendMoney;
+		cout << "\n\tCantidad: $" << dineroEnviar;
+		cout << "\n\nDesea confirmar su transaccion?";
+
+	} while (Confirmacion() != true);
+
+	loading();
+
+	if (balance < dineroEnviar)
+	{
+		cout << Red; cout << "Transaccion no ha sido completada debido a insuficientes fondos disponibles.\a\n\n" << Default;
+	}
+	else
+	{
+
+		cout << Green; cout << "Transaccion ha sido completada! \a\n\n" << Default;
+	}
+
+		secs(1);	
+
+	return dineroEnviar;
+}
+
+int moneySent(Usuario usuarios[], int x, int dineroEnviar) {
+	return usuarios[x].balance = usuarios[x].balance - dineroEnviar;
+}
+
+int moneyReceived(Usuario usuarios[], int y, int dineroEnviar) {
+	return usuarios[y].balance = usuarios[y].balance + dineroEnviar;
+}
+
+
+/////////////////// SEND MONEY
+
 //se le pasa los bluePrints que tiene el array usuarios
 void dbUsuarios(Usuario usuarios[], int numUsuarios)
 {
@@ -458,10 +543,10 @@ void menuPrincipal()
 	//este array tiene para crear 10 elementos
 	//0-9
 	Usuario usuarios[numUsuarios]; //crear usuarios basados en el bluePrint(estructura) llamada Usuario que ya contiene las variables
-	bool masterkey = false, salir = false, pass = false; //Mantiene loop corriendo
+	bool masterkey = false, sendMoneyUser = false, salir = false, pass = false; //Mantiene loop corriendo
 	string name, lastName, username, password, admin, adminPassword;
 	//se  crea menu principal
-	int opc, menuOpc, input, ccN, sN, userNumberID;
+	int opc, menuOpc, input, ccN, sN, userNumberID, sender, recipient, dineroEnviar;
 	do
 	{
 		string adminAccess = (masterkey) ? "3. Bases de Datos\n" : "";
@@ -530,14 +615,46 @@ void menuPrincipal()
 						switch (menuOpc)
 						{
 						case 1:
-							//sendMoney();
+							ms();
+							do {
+								do {
+									sender = idNum(usuarios, username);
+									cout << EnviarDinero(usuarios, sender);
+
+									if (UserExists(usuarios, numUsuarios, EnviarDinero(usuarios, sender)))
+									{
+										recipient = idNum(usuarios, EnviarDinero(usuarios, sender));
+										sendMoneyUser = true;
+									}
+									else {
+										blip();
+										cout << Red; cout << "\n\n * Usuario NO existe *" << Default;
+										secs(2);
+									}
+								} while (sendMoneyUser == false);
+
+								cout << EnviarDineroCont(usuarios,EnviarDinero(usuarios, sender), sender);
+
+								dineroEnviar = EnviarDineroCont(usuarios, EnviarDinero(usuarios, sender), sender);
+
+								moneySent(usuarios, sender, dineroEnviar);
+								moneyReceived(usuarios, recipient, dineroEnviar);
+
+								cout << Balance(usuarios[sender].balance) << Default;
+
+								cout << "\n\nDesea hacer otra transaccion?\n";
+							} while (Confirmacion());
+
 							break;
+
 						case 2:
 							//HistorialTransaccion();
 							break;
+
 						case 3:
 							Fondos(usuarios, idNum(usuarios, username));
 							break;
+
 						default:
 							if (menuOpc != 0) {
 								invalido();
