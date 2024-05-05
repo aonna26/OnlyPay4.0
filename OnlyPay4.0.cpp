@@ -394,7 +394,7 @@ bool loginVerificar(Usuario usuarios[], int numUsuarios, string username, string
 
 
 		}
-	}
+	} // loop
 	if (intentos < 3) {
 		blip();
 		cout << Red; cout << "\nNOMBRE DE USUARIO o PASSWORD * INCORRECTO *\n\n" << Yellow;
