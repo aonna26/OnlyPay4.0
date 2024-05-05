@@ -37,4 +37,4 @@ version 1.03
   * Implementacion de cuenta de administrador de bases de datos
 
 #Licencia
-[Licenncia MIT](LICENSE).
+[Licenncia MIT](LICENSE.txt).
