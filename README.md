@@ -36,4 +36,4 @@ version 1.03
   * Mejoras en el formato de texto (colores y espacios)
   * Implementacion de cuenta de administrador de bases de datos
 
-
+##LICENSE.txt
