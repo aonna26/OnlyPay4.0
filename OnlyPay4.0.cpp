@@ -451,7 +451,6 @@ void userSearch(Usuario usuarios[], int x)
 	dots();
 }
 
-
 void menuPrincipal()
 {
 	//La capacidad maxima de usuarios sera 10
