@@ -439,27 +439,21 @@ int Balance(int balance) {
 	return balance;
 }
 
-string EnviarDinero(Usuario usuarios[], int x)
+int EnviarDinero(Usuario usuarios[], int x)
 {
-	string userToSendMoney;
-	int balance = usuarios[x].balance;
-
-	cout << Balance(balance) << Default;
-	cout << "\n\nSaludos, a quien usted quiere enviar dinero? " << endl
-		<< "\nRecipiente: ";
-	cin >> userToSendMoney;
-
-	return userToSendMoney;
-}
-
-int EnviarDineroCont(Usuario usuarios[], string userToSendMoney, int x) {
-
 	srand(time(0));  //// tiempo es random
+	string userToSendMoney, confirmacion;
+	bool tryAgain = true;
 	int balance = usuarios[x].balance;
 	int dineroEnviar = 0;
-	do {
 
-		cout << "Cantidad: $";
+	do {
+		ms();
+		cout << Balance(balance) << Default;
+		cout << "\n\nSaludos, a quien usted quiere enviar dinero? " << endl
+			<< "\nRecipiente: ";
+		cin >> userToSendMoney;
+		cout << "\nCantidad: $";
 		cin >> dineroEnviar;
 		secs(1);
 
@@ -468,36 +462,114 @@ int EnviarDineroCont(Usuario usuarios[], string userToSendMoney, int x) {
 		cout << "\n\tRecipiente: " << userToSendMoney;
 		cout << "\n\tCantidad: $" << dineroEnviar;
 		cout << "\n\nDesea confirmar su transaccion?";
-
-	} while (Confirmacion() != true);
+		cout << "\nPuede responder con Si o No: \n\n";
+		cin >> confirmacion;
+		if (confirmacion == "NO" || confirmacion == "no" || confirmacion == "No") {
+			tryAgain = true;
+		}
+		else {
+			tryAgain = false;
+		}
+		ms();
+	} while (tryAgain == true);
 
 	loading();
 
 	if (balance < dineroEnviar)
 	{
 		cout << Red; cout << "Transaccion no ha sido completada debido a insuficientes fondos disponibles.\a\n\n" << Default;
+		secs(1);
+		return 0;
 	}
 	else
 	{
 
+		for (int i = 0; i < maxTrans; i++)
+		{
+			if (Historial[i].destinario.empty())
+			{
+				Historial[i].destinario = userToSendMoney;
+				Historial[i].dineroEnviado = dineroEnviar;
+				break;
+			}
+		}
+
 		cout << Green; cout << "Transaccion ha sido completada! \a\n\n" << Default;
+		secs(1);
+
+		return usuarios[x].balance = usuarios[x].balance - dineroEnviar;
 	}
-
-		secs(1);	
-
-	return dineroEnviar;
 }
 
-int moneySent(Usuario usuarios[], int x, int dineroEnviar) {
-	return usuarios[x].balance = usuarios[x].balance - dineroEnviar;
+///////////////////////////// TRANSACCIONES //
+
+
+void EstadoCuenta(Usuario usuarios[], int x)
+{
+
+	//struct de Usuario
+
+	ofstream EstadoCuenta("EstadoCuenta.txt");
+
+	EstadoCuenta << "========================== Estado de Cuenta ==========================" << endl;
+	EstadoCuenta << "\nNombre: " << usuarios[x].name << " " << usuarios[x].lastName << endl;
+
+	for (int i = 0; i < maxTrans; i++)
+	{
+		if (usuarios[x].balance > 0) {
+			EstadoCuenta << "\nTransaccion #" << i << " ---> " << "Cantidad: " << Historial[i].dineroEnviado <<
+				", " << " Balance: " << usuarios[x].balance << "\n\n";
+			EstadoCuenta << ". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n";
+		}
+
+	}	
+	EstadoCuenta << "\n\n========================== Gracias por escoger OnlyPay ==========================" << endl;
+
+	EstadoCuenta.close();
+
 }
 
-int moneyReceived(Usuario usuarios[], int y, int dineroEnviar) {
-	return usuarios[y].balance = usuarios[y].balance + dineroEnviar;
+void HistorialTransaccion()
+{
+	srand(time(0));//crea una semilla de inicio para que rand genere los numeros aleatorios
+	int year = rand() % 15 + 2010;//Rango de year: 2010-2024
+	int month = rand() % 12 + 1; //Rango de meses: 1-12
+	int day = rand() % 31 + 1;// Rango de dias: 1-31
+
+
+	int hora = rand() % 24;//Rango de horas: 0-23
+	int minutos = rand() % 60;//Rango de los minutos: 0-59
+	string fechaTransaccion = to_string(month) + "/" + to_string(day) + "/" + to_string(year);
+	string horaTransaccion = to_string(hora) + ":" + to_string(minutos);
+
+	ms();
+
+	//Recorre los bluePrints del array
+	for (int i = 0; i < maxTrans; i++)
+	{
+		if (Historial[i].destinario.empty())
+		{
+
+		}
+		else
+		{
+			cout << "\nHistorial de Transacciones\n" << endl;
+			cout << "---------------------------------------\n\n";
+			cout << "\nRecipiente: " << Historial[i].destinario << "\n";
+			cout << "\nCantidad: $" << Historial[i].dineroEnviado << "\n\n\n";
+			cout << "Fecha " << fechaTransaccion << endl;
+			cout << "Hora " << horaTransaccion << " PM\n\n";
+			cout << "******************************************************" << endl;
+
+		}
+	}
+	cout << "\n\n" << Yellow;
+	system("pause");
+	cout << Default;
+	ms();
 }
 
-
-/////////////////// SEND MONEY
+////////////////////////////////
 
 //se le pasa los bluePrints que tiene el array usuarios
 void dbUsuarios(Usuario usuarios[], int numUsuarios)
@@ -615,45 +687,24 @@ void menuPrincipal()
 						menuOpc = UserMenu(username);
 						switch (menuOpc)
 						{
-						case 1:
-							ms();
-							do {
-								do {
-									sender = idNum(usuarios, username);
-									cout << EnviarDinero(usuarios, sender);
-
-									if (UserExists(usuarios, numUsuarios, EnviarDinero(usuarios, sender)))
-									{
-										recipient = idNum(usuarios, EnviarDinero(usuarios, sender));
-										sendMoneyUser = true;
-									}
-									else {
-										blip();
-										cout << Red; cout << "\n\n * Usuario NO existe *" << Default;
-										secs(2);
-									}
-								} while (sendMoneyUser == false);
-
-								cout << EnviarDineroCont(usuarios,EnviarDinero(usuarios, sender), sender);
-
-								dineroEnviar = EnviarDineroCont(usuarios, EnviarDinero(usuarios, sender), sender);
-
-								moneySent(usuarios, sender, dineroEnviar);
-								moneyReceived(usuarios, recipient, dineroEnviar);
-
-								cout << Balance(usuarios[sender].balance) << Default;
-
-								cout << "\n\nDesea hacer otra transaccion?\n";
-							} while (Confirmacion());
-
+						case 1:		
+							sender = idNum(usuarios, username);
+							EnviarDinero(usuarios, sender);
 							break;
 
 						case 2:
-							//HistorialTransaccion();
+							HistorialTransaccion();
 							break;
 
 						case 3:
 							Fondos(usuarios, idNum(usuarios, username));
+							break;
+
+						case 4:
+							EstadoCuenta(usuarios, idNum(usuarios, username));
+							blip();
+							cout << Green; cout << "\n\n * txt.file creado *" << Default;
+							blip(10);
 							break;
 
 						default:

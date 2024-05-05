@@ -1,0 +1,35 @@
+========================== Estado de Cuenta ==========================
+
+  Nombre: Amisa Camisa
+
+Transaccion #0 ---> Cantidad: 100,  Balance: 100
+
+
+Transaccion #1 ---> Cantidad: 50,  Balance: 100
+
+
+Transaccion #2 ---> Cantidad: 93,  Balance: 100
+
+
+Transaccion #3 ---> Cantidad: 653,  Balance: 100
+
+
+Transaccion #4 ---> Cantidad: 4,  Balance: 100
+
+
+Transaccion #5 ---> Cantidad: 0,  Balance: 100
+
+
+Transaccion #6 ---> Cantidad: 0,  Balance: 100
+
+
+Transaccion #7 ---> Cantidad: 0,  Balance: 100
+
+
+Transaccion #8 ---> Cantidad: 0,  Balance: 100
+
+
+Transaccion #9 ---> Cantidad: 0,  Balance: 100
+
+
+========================== Gracias por escoger OnlyPay ==========================
