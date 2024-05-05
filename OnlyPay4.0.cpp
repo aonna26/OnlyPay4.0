@@ -18,18 +18,6 @@
 
 using namespace std;
 
-//ui
-void arrow() {
-	cout << " -> ";
-}
-
-void line() {
-	cout << "-----------------------------------------------------------------------------------------------------------------------------------------\n";
-}
-
-void dots() {
-	cout << ". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n";
-}
 
 //// tiempo
 
@@ -45,6 +33,24 @@ void ms() {
 void secs(int x) {
 	Sleep(x * 1000);
 	system("cls");
+}
+
+//ui
+void arrow() {
+	cout << " -> ";
+}
+
+void line() {
+	cout << "-----------------------------------------------------------------------------------------------------------------------------------------\n";
+}
+
+void dots() {
+	cout << ". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n";
+}
+
+void invalido() {
+	blip();
+	cout << Red; cout << " * Ingreso NO valido * \n" << Default;
 }
 
 //// animated screen
@@ -108,12 +114,12 @@ bool sNCheck(int sN) {
 
 	//Si el password no es mayor que 8 
 	//devuelve falso (Weak Password)
-	if (x.length() > 4)
+	if (x.length() > 3)
 	{
 		cout << "\n- Numero de seguridad demasiado largo! -";
 		blip(10);
 	}
-	if (x.length() <= 0)
+	else if (x.length() < 3)
 	{
 		cout << "\n- Numero de seguridad demasiado corto! -";
 		blip(10);
@@ -121,7 +127,7 @@ bool sNCheck(int sN) {
 
 	cout << Default;
 
-	return x.length() == 4;
+	return x.length() == 3;
 }
 
 bool ccNCheck(int ccN)
@@ -260,19 +266,37 @@ bool UserExists(Usuario usuarios[], int numUsuarios, string username)
 	return false;//si son diferentes los usernames devuelve false
 }
 
+int idNum(Usuario usuarios[], string username) {
+
+	////Recorre buscando cual es el usuario
+
+	bool salir = false;
+	int x;
+
+	for (int i = 0; i < numUsuarios && salir == false; i++)
+	{
+		//si el usuario[0] esta empty en blueprint (Usuario) 0 guarda la informacion
+		if (usuarios[i].username == username) //Al encontrar un elemento vacio guarda la informacion del usuario en ese elemento
+		{
+			salir = true;
+		}
+		x = i;
+	}
+	return x;
+}
+
 int Fondos(Usuario usuarios[], int i)
 {
 	int fondos;
-	//// a adir fondos al balance
+	//// añadir fondos al balance
 	ms();
 	do {
 		cout << "Cuanto dinero desea agregar a sus fondos?\n\n$";
 		cin >> fondos;
 		if (fondos > 1000) {
+			invalido();
 			blip();
-			cout << Red; cout << "\n * Ingreso Invalido *";
-			blip();
-			cout << "\n * Limite de $1000 *" << Default;
+			cout << Red; cout << "\n * Limite de $1000 *" << Default;
 			blip();
 			cout << "\n * Vuelva a Intentar *";
 			secs(3);
@@ -342,14 +366,11 @@ void RegistrarCuenta(Usuario usuarios[], int numUsuarios, string name, string la
 	}
 }
 
-
-void welcomeMenu(string username)
+int UserMenu(string username)
 {
-	ms();
 	int opc;
 	usuarioActivo usuario;
 
-	do {
 		cout << " Hola '" << username << "' Bienvenido a OnlyPay! \n\n";
 		cout << "   -- " << "MENU" << " --      \n" << endl;
 		cout << "1. Enviar dinero" << endl;
@@ -359,23 +380,11 @@ void welcomeMenu(string username)
 		cout << "0. Salir\n\n";
 		cout << "Seleccione una opcion: " << endl;
 		cin >> opc;
-		switch (opc)
-		{
-		case 1:
-			//sendMoney();
-			break;
-		case 2:
-			//HistorialTransaccion();
-			break;
-		case 3:
-			Fondos(usuarios, usuario.ID);
-			break;
-		}
-
-	} while (opc != 0);
+		return opc;
 }
 
-bool loginVerificar(Usuario usuarios[], int numUsuarios, string username, string password)
+
+bool loginVerificar(Usuario usuarios[], int numUsuarios, string username, string password, int intentos)
 {
 	bool salir = false;
 	usuarioActivo usuario;
@@ -394,11 +403,24 @@ bool loginVerificar(Usuario usuarios[], int numUsuarios, string username, string
 		}
 		else
 		{
-			cout << "Tu nombre de usuario o contrasena es incorrecta";
-			cout << "Favor de intentar de nuevo";
-			secs(2);
-			salir = true;
-			return false;
+			if (intentos < 3) {
+				blip();
+				cout << Red; cout << "\nNOMBRE DE USUARIO o PASSWORD * INCORRECTO *\n\n" << Yellow;
+				blip();
+				cout << " - Favor intentar de nuevo -\n" << Default;
+				secs(3);
+				salir = true;
+				return false;
+			}
+			else {
+				blip();
+				cout << Red; cout << "\nNOMBRE DE USUARIO o PASSWORD * INCORRECTO *\n\n";
+				blip();
+				cout << " * Ingreso fallido *\n" << Default;
+				secs(3);
+				salir = true;
+				return false;
+			}
 		}
 	}
 }
@@ -450,7 +472,7 @@ void menuPrincipal()
 	bool masterkey = false, salir = false, pass = false; //Mantiene loop corriendo
 	string name, lastName, username, password, admin, adminPassword;
 	//se  crea menu principal
-	int opc, input, ccN, sN, userNumberID;
+	int opc, menuOpc, input, ccN, sN, userNumberID;
 	do
 	{
 		string adminAccess = (masterkey) ? "3. Bases de Datos\n" : "";
@@ -480,10 +502,11 @@ void menuPrincipal()
 					ms();
 					cout << "   - Registre su Cuenta -\n\n";
 					cout << "Crea un nombre de usuario: " << endl;
+					cout << Yellow; cout << "(El NOMBRE DE USUARIO debe tener 6 o mas CARACTERES!) \n" << Default;
 					cin >> username;
 				} while (UsernameCheck(username) != true);
-				cout << Yellow; cout << "\n\n\n(El password debe tener mas de 8 CARACTERES!, Debe contener un CARACTER ESPECIAL, una letra MAYUSCULA y una letra MINUSCULA!.)\n" << Default;
-				cout << "\nCrea un password: " << endl;
+				cout << "\n\nCrea un password: \n";
+				cout << Yellow; cout << "(El PASSWORD debe tener 9 o mas CARACTERES!, Debe contener un CARACTER ESPECIAL, una letra MAYUSCULA y una letra MINUSCULA!.)\n" << Default;
 				cin >> password;
 			} while (PasswordCheck(password, pass) != true);
 			//se pasan las variables a la funcion RegistrarCuenta
@@ -493,26 +516,55 @@ void menuPrincipal()
 					ms();
 					cout << "   - Registre su Cuenta -\n\n";
 					cout << "Ingrese el numero de su Tarjeta de Credito: \n";
-					cout << "Son mas de 8 DIGITOS \n";
+					cout << Yellow; cout << "(Debe ingresar los 9 DIGITOS de su tarjeta) \n" << Default;
 					cin >> ccN;
 				} while (ccNCheck(ccN) != true);
 				cout << "\nIngrese el Numero Secreto de su tarjeta de credito: \n";
+				cout << Yellow; cout << "(Debe ingresar los 3 DIGITOS detras de su tarjeta) \n" << Default;
 				cin >> sN;
 			} while (sNCheck(sN) != true);
 			RegistrarCuenta(usuarios, numUsuarios, name, lastName, username, password, ccN, sN);
 			break;
 
 		case 2:
-			cout << "   - Inicie su Cuenta -\n\n";
-			cout << "Usuario: " << endl;
-			cin >> username;
-			cout << "Password: " << endl;
-			cin >> password;
-			if (loginVerificar(usuarios, numUsuarios, username, password))
-			{
-				welcomeMenu(username);
-			}
+			for (int x = 1; x <= 3; x++) {
+				cout << "   - Inicie su Cuenta -\n\n";
+				cout << "Usuario: " << endl;
+				cin >> username;
+				cout << "Password: " << endl;
+				cin >> password;
+				if (loginVerificar(usuarios, numUsuarios, username, password, x))
+				{
+					do{
+						ms();
+						menuOpc = UserMenu(username);
+						switch (menuOpc)
+						{
+						case 1:
+							//sendMoney();
+							break;
+						case 2:
+							//HistorialTransaccion();
+							break;
+						case 3:
+							Fondos(usuarios, idNum(usuarios, username));
+							break;
+						default:
+							if (menuOpc != 0) {
+								invalido();
+								secs(2);
+							}
+							else {
+								ms();
+							}
+							break;
+						}
 
+					} while (menuOpc != 0);
+
+					x = 3;
+				}
+			}
 			break;
 
 		case 3:
@@ -553,7 +605,7 @@ void menuPrincipal()
 
 						default:
 							if (input != 3 && input != 2 && input != 1 && input != 0) {
-								cout << Red; cout << "\n * Ingreso NO valido *\n\n" << Default;
+								invalido();
 							}
 							break;
 						}
@@ -572,7 +624,7 @@ void menuPrincipal()
 				masterkey = true;
 			}
 			else {
-				cout << Red; cout << " * Ingreso NO valido *" << Default;
+				invalido();
 				secs(2);
 			}
 			break;
