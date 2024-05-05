@@ -491,44 +491,63 @@ int EnviarDinero(Usuario usuarios[], int x)
 
 ///////////////////////////// TRANSACCIONES //
 
+string Fecha()
+{
+	/***************************/
+// [cplus.com][<cstdlib>:rand] Recuperado desde: [https://cplusplus.com/reference/cstdlib/rand/#:~:text=v1%20%3D%20rand%28%29%20%25%20100%3B%20%2F%2F%20v1%20in,%2B%201985%3B%20%2F%2F%20v3%20in%20the%20range%201985-2014]
+	srand(time(0));//crea una semilla de inicio para que rand genere los numeros aleatorios
+	int year = rand() % 15 + 2010;//Rango de year: 2010-2024
+	int month = rand() % 12 + 1; //Rango de meses: 1-12
+	int day = rand() % 31 + 1;// Rango de dias: 1-31
+	/***************************/
+
+	string fechaTransaccion = to_string(month) + "/" + to_string(day) + "/" + to_string(year);
+	
+
+	return fechaTransaccion;
+}
+
+string Hora()
+{
+	int hora = rand() % 24;//Rango de horas: 0-23
+	int minutos = rand() % 60;//Rango de los minutos: 0-59
+
+	string horaTransaccion = to_string(hora) + ":" + to_string(minutos);
+
+	return horaTransaccion;
+}
 
 void EstadoCuenta(Usuario usuarios[], int x)
 {
+	string fechaTransaccion = Fecha();
+	string horaTransaccion = Hora();
 
 	//struct de Usuario
-
-	ofstream EstadoCuenta("EstadoCuenta.txt");
+	ofstream EstadoCuenta("EstadoCuenta.txt");//se crea y abre el text file
 
 	EstadoCuenta << "========================== Estado de Cuenta ==========================" << endl;
 	EstadoCuenta << "\nNombre: " << usuarios[x].name << " " << usuarios[x].lastName << endl;
 
 	for (int i = 0; i < maxTrans; i++)
 	{
-		if (usuarios[x].balance > 0) {
+		//debe tener un balance mayor o igual a 0 y debe haber enviado una cantidad mayor de 0
+		if (usuarios[x].balance >= 0 && Historial[i].dineroEnviado>0) 
+		{
 			EstadoCuenta << "\nTransaccion #" << i << " ---> " << "Cantidad: " << Historial[i].dineroEnviado <<
-				", " << " Balance: " << usuarios[x].balance << "\n\n";
+				", " << " Balance: " << usuarios[x].balance << " Fecha:  " << fechaTransaccion << "  " << "Hora: " << horaTransaccion << "\n\n";
 			EstadoCuenta << ". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n";
 		}
-
 	}	
 	EstadoCuenta << "\n\n========================== Gracias por escoger OnlyPay ==========================" << endl;
 
-	EstadoCuenta.close();
+	EstadoCuenta.close(); //para abrir el archivo 
 
 }
 
 void HistorialTransaccion()
 {
-	srand(time(0));//crea una semilla de inicio para que rand genere los numeros aleatorios
-	int year = rand() % 15 + 2010;//Rango de year: 2010-2024
-	int month = rand() % 12 + 1; //Rango de meses: 1-12
-	int day = rand() % 31 + 1;// Rango de dias: 1-31
-
-
-	int hora = rand() % 24;//Rango de horas: 0-23
-	int minutos = rand() % 60;//Rango de los minutos: 0-59
-	string fechaTransaccion = to_string(month) + "/" + to_string(day) + "/" + to_string(year);
-	string horaTransaccion = to_string(hora) + ":" + to_string(minutos);
+	string fechaTransaccion = Fecha();
+	string horaTransaccion = Hora();
 
 	ms();
 
