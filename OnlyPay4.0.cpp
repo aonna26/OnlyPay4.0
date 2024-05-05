@@ -53,18 +53,6 @@ void invalido() {
 	cout << Red; cout << " * Ingreso NO valido * \n" << Default;
 }
 
-bool Confirmacion() {
-	string confirmacion;
-	bool again = false;
-	cout << "\nPuede responder con Si o No: \n\n";
-	cin >> confirmacion;
-	if (confirmacion == "NO" || confirmacion == "no" || confirmacion == "No") {
-		again = true;
-		secs(1);
-	}
-	return again;
-}
-
 //// animated screen
 void loading(int x = 3, string verify = "el balance disponible") {
 	ms();
