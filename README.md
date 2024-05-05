@@ -10,7 +10,7 @@ App de simulacion de banco movil que permite a los usuarios hacer transacciones,
 # Version History
 
 
-       version 1.0
+        version 1.0
  * Implementacion de registro y login
  * Implementacion de registro de usuarios
  * Implementacion de Login para usuarios existentes
