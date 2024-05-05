@@ -11,12 +11,12 @@ App de simulacion de banco movil que permite a los usuarios hacer transacciones,
 
 
         version 1.0
- * Implementacion de registro y login
- * Implementacion de registro de usuarios
- * Implementacion de Login para usuarios existentes
- * Implementacion de menu basico
+  * Implementacion de registro y login
+  * Implementacion de registro de usuarios
+  * Implementacion de Login para usuarios existentes
+  * Implementacion de menu basico
 
-       version 1.01
+        version 1.01
  * Implementacion de sistema de verificacion para cuentas existentes
  * Implementacion para verificacion de password seguro 
 
