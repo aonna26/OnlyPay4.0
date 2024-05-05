@@ -348,13 +348,6 @@ void RegistrarCuenta(Usuario usuarios[], int numUsuarios, string name, string la
 				cout << Green; cout << " * Usuario '" << username << "' creado correctamente! *" << Default;
 				secs(2);
 
-				/*cout << "Desea ingresar fondos?\n\n";
-				cout << "Conteste Si o No:\n\n";
-				cin >> opc;
-				if (opc != "no" && opc != "NO" && opc != "No") {
-					Fondos(usuarios, usuario.ID);
-				}
-				*/
 				salir = true;
 			}
 		}
@@ -401,27 +394,24 @@ bool loginVerificar(Usuario usuarios[], int numUsuarios, string username, string
 
 
 		}
-		else
-		{
-			if (intentos < 3) {
-				blip();
-				cout << Red; cout << "\nNOMBRE DE USUARIO o PASSWORD * INCORRECTO *\n\n" << Yellow;
-				blip();
-				cout << " - Favor intentar de nuevo -\n" << Default;
-				secs(3);
-				salir = true;
-				return false;
-			}
-			else {
-				blip();
-				cout << Red; cout << "\nNOMBRE DE USUARIO o PASSWORD * INCORRECTO *\n\n";
-				blip();
-				cout << " * Ingreso fallido *\n" << Default;
-				secs(3);
-				salir = true;
-				return false;
-			}
-		}
+	} // loop
+	if (intentos < 3) {
+		blip();
+		cout << Red; cout << "\nNOMBRE DE USUARIO o PASSWORD * INCORRECTO *\n\n" << Yellow;
+		blip();
+		cout << " - Favor intentar de nuevo -\n" << Default;
+		secs(3);
+		salir = true;
+		return false;
+	}
+	else {
+		blip();
+		cout << Red; cout << "\nNOMBRE DE USUARIO o PASSWORD * INCORRECTO *\n\n";
+		blip();
+		cout << " * Ingreso fallido *\n" << Default;
+		secs(3);
+		salir = true;
+		return false;
 	}
 }
 //se le pasa los bluePrints que tiene el array usuarios
